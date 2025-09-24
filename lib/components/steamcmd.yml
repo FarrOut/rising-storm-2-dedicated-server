@@ -1,5 +1,5 @@
 name: InstallSteamCMD
-description: Installs SteamCMD on a Linux machine
+description: Installs SteamCMD on Ubuntu
 schemaVersion: 1.0
 
 phases:
@@ -10,7 +10,7 @@ phases:
         inputs:
           commands:
             - sudo apt-get update
-            - sudo apt-get install -y lib32gcc1 lib32stdc++6
+            - sudo apt-get install -y lib32gcc-s1 lib32stdc++6
 
       - name: CreateSteamCMDDirectory
         action: ExecuteBash
@@ -30,6 +30,8 @@ phases:
         inputs:
           commands:
             - chmod +x ~/steamcmd/steamcmd.sh
+            - chmod -R 755 ~/steamcmd
+            - chmod 755 ~
 
       - name: UpdateSteamCMD
         action: ExecuteBash
@@ -41,4 +43,6 @@ phases:
         action: ExecuteBash
         inputs:
           commands:
-            - sudo ln -s ~/steamcmd/steamcmd.sh /usr/local/bin/steamcmd
+            - sudo ln -s /root/steamcmd/steamcmd.sh /usr/local/bin/steamcmd
+            - sudo chmod 755 /usr/local/bin/steamcmd
+            - sudo chmod 755 /root/steamcmd/steamcmd.sh

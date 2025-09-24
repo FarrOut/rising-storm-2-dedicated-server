@@ -1,0 +1,12 @@
+{
+  "sshPublicKey": "~/.ssh/id_cybercaptain.pub",
+  "availability-zones:account=595470990922:region=af-south-1": [
+    "af-south-1a",
+    "af-south-1b",
+    "af-south-1c"
+  ],
+  "ami:account=595470990922:filters.image-type.0=machine:filters.name.0=ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*:filters.state.0=available:owners.0=099720109477:region=af-south-1": "ami-07c453663fd5f4f90",
+  "acknowledged-issue-numbers": [
+    34892
+  ]
+}

@@ -1,0 +1,76 @@
+name: InstallRS2VietnamGameServer
+description: Installs Rising Storm 2 Vietnam dedicated server using SteamCMD
+schemaVersion: 1.0
+phases:
+  - name: build
+    steps:
+      - name: CreateGameServerUser
+        action: ExecuteBash
+        inputs:
+          commands:
+            - sudo adduser --disabled-password --gecos "" rs2server
+
+      - name: CreatePlaceholderServer
+        action: ExecuteBash
+        inputs:
+          commands:
+            - sudo -u rs2server mkdir -p /home/rs2server/rs2vietnam
+            - echo "RS2:Vietnam Linux dedicated server not available via SteamCMD" | sudo -u rs2server tee /home/rs2server/rs2vietnam/README.txt
+
+      - name: CreateServerConfig
+        action: ExecuteBash
+        inputs:
+          commands:
+            - sudo -u rs2server mkdir -p /home/rs2server/rs2vietnam/ROGame/Config
+            - |
+              sudo -u rs2server tee /home/rs2server/rs2vietnam/ROGame/Config/ROEngine.ini > /dev/null << 'EOF'
+              [URL]
+              Port=7777
+              
+              [Engine.GameReplicationInfo]
+              ServerName=RS2 Vietnam Dedicated Server
+              
+              [ROGame.ROGameInfo]
+              ServerName=RS2 Vietnam Dedicated Server
+              EOF
+
+      - name: CreateStartScript
+        action: ExecuteBash
+        inputs:
+          commands:
+            - |
+              sudo -u rs2server tee /home/rs2server/start_server.sh > /dev/null << 'EOF'
+              #!/bin/bash
+              cd /home/rs2server/rs2vietnam/Binaries/Linux
+              ./ROGameServer-Linux-Shipping VNTE-Resort?Mutator=ROGame.ROMutator_AntiTeamKill?MaxPlayers=64 -Port=7777 -QueryPort=27015 -WebAdminPort=8080
+              EOF
+            - sudo chmod +x /home/rs2server/start_server.sh
+
+      - name: CreateSystemdServiceFile
+        action: ExecuteBash
+        inputs:
+          commands:
+            - |
+              sudo tee /etc/systemd/system/rs2vietnam.service > /dev/null << EOF
+              [Unit]
+              Description=Rising Storm 2 Vietnam Dedicated Server
+              After=network.target
+
+              [Service]
+              Type=simple
+              User=rs2server
+              WorkingDirectory=/home/rs2server
+              ExecStart=/home/rs2server/start_server.sh
+              Restart=on-failure
+              RestartSec=5
+
+              [Install]
+              WantedBy=multi-user.target
+              EOF
+
+      - name: EnableService
+        action: ExecuteBash
+        inputs:
+          commands:
+            - sudo systemctl daemon-reload
+            - sudo systemctl enable rs2vietnam.service

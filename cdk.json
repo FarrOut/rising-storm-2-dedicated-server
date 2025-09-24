@@ -1,5 +1,5 @@
 {
-  "app": "npx ts-node --prefer-ts-exts bin/rust-server.ts",
+  "app": "npx ts-node --prefer-ts-exts bin/rs2vietnam-server.ts",
   "watch": {
     "include": [
       "**"
