@@ -1,8 +1,15 @@
-*.js
-!jest.config.js
-*.d.ts
-node_modules
+# Secrets — never commit
+.env
 
-# CDK asset staging directory
-.cdk.staging
-cdk.out
+# WireGuard keys and peer configs — contains private keys, never commit
+wireguard/
+
+# Tailscale state — contains node keys, never commit
+tailscale/
+
+# Docker volume — server saves, generated configs, downloaded content
+data/
+
+# OS
+.DS_Store
+Thumbs.db
