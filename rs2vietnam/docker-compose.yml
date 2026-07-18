@@ -1,0 +1,40 @@
+# ============================================================
+# Rising Storm 2: Vietnam Dedicated Server
+# Requires the shared Tailscale sidecar to be running first:
+#   docker compose -f ../docker-compose.tailscale.yml up -d
+#
+# Connect via Tailscale at: <fightclub-ip>:7777
+# Web admin panel: <fightclub-ip>:8080
+# ============================================================
+services:
+  rs2vietnam:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: rs2vietnam-server:latest
+    container_name: rs2vietnam
+    restart: unless-stopped
+    env_file:
+      - path: ../.env
+        required: false
+    # Share the Tailscale container's network namespace
+    network_mode: "container:tailscale"
+
+    volumes:
+      - ./data:/home/steam/rs2vietnam:rw
+      - ./config:/home/steam/rs2vietnam/ROGame/Config:ro
+      - ./steamcmd-state:/home/steam/steamcmd-state:ro
+
+    environment:
+      RS2_SERVER_NAME: "${RS2_SERVER_NAME:-My RS2 Vietnam Server}"
+      RS2_MAP: "${RS2_MAP:-VNTE-AnLaoValley}"
+      RS2_MAX_PLAYERS: "${RS2_MAX_PLAYERS:-32}"
+      RS2_PASSWORD: "${SERVER_PASSWORD:-}"
+      RS2_ADMIN_PASSWORD: "${RS2_ADMIN_PASSWORD:-changeme}"
+      RS2_GAME_PORT: "7777"
+      RS2_QUERY_PORT: "27015"
+      RS2_WEB_ADMIN_PORT: "8080"
+      # First run only — remove from .env after initial download
+      STEAM_USER: "${STEAM_USER:-}"
+      STEAM_PASS: "${STEAM_PASS:-}"
+      STEAM_GUARD: "${STEAM_GUARD:-}"

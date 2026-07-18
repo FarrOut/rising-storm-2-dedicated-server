@@ -1,0 +1,4 @@
+# Admins.txt
+# Add Steam64 IDs of admins, one per line.
+# Example:
+# 76561198000000000

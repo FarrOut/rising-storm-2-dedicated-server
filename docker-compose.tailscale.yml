@@ -1,0 +1,26 @@
+# ============================================================
+# Shared Tailscale sidecar — start this first, always.
+# All game servers attach to this container's network stack
+# and are reachable at the single "fightclub" Tailscale IP.
+#
+# Usage:
+#   docker compose -f docker-compose.tailscale.yml up -d
+# ============================================================
+services:
+  tailscale:
+    image: tailscale/tailscale:latest
+    container_name: tailscale
+    restart: unless-stopped
+    env_file:
+      - ./.env
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    volumes:
+      - ./tailscale/state:/var/lib/tailscale
+      - /dev/net/tun:/dev/net/tun
+    environment:
+      TS_AUTHKEY: "${TS_AUTHKEY}"
+      TS_STATE_DIR: "/var/lib/tailscale"
+      TS_EXTRA_ARGS: "--hostname=fightclub"
+      TS_USERSPACE: "false"

@@ -7,8 +7,13 @@ wireguard/
 # Tailscale state — contains node keys, never commit
 tailscale/
 
-# Docker volume — server saves, generated configs, downloaded content
+# Runtime server data volumes — too large for git
 data/
+sandstorm/data/
+rs2vietnam/data/
+
+# Steam auth token — contains login credentials, never commit
+rs2vietnam/steamcmd-state/
 
 # OS
 .DS_Store

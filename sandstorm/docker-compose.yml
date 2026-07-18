@@ -1,0 +1,31 @@
+# ============================================================
+# Insurgency: Sandstorm Dedicated Server
+# Requires the shared Tailscale sidecar to be running first:
+#   docker compose -f ../docker-compose.tailscale.yml up -d
+#
+# Connect via Tailscale at: <fightclub-ip>:27102
+# ============================================================
+services:
+  sandstorm:
+    image: andrewmhub/insurgency-sandstorm:lite
+    container_name: insurgency-sandstorm
+    restart: unless-stopped
+    env_file:
+      - ../.env
+    # Share the Tailscale container's network namespace
+    network_mode: "container:tailscale"
+
+    volumes:
+      - ./data:/home/steam/steamcmd/sandstorm:rw
+      - ./config:/home/steam/steamcmd/sandstorm/Insurgency/Saved/Config/LinuxServer:ro
+
+    environment:
+      HOSTNAME: "${SERVER_NAME:-My Sandstorm Server}"
+      PORT: "27102"
+      QUERYPORT: "27131"
+      LAUNCH_SERVER_ENV: >-
+        ${MAP:-Farmhouse}?Scenario=${SCENARIO:-Scenario_Farmhouse_Checkpoint_Security}?MaxPlayers=${MAX_PLAYERS:-10}?password=${SERVER_PASSWORD}
+        -GSLTToken=${GSLT_TOKEN}
+        -NoSteamServer
+        -log
+        -logbufferless
